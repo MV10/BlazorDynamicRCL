@@ -1,0 +1,35 @@
+﻿@page "/dynamicloader/{encodedAssemblyPathname}"
+@using RazorComponentManager
+@implements IDisposable
+
+<h3>DynamicLoader</h3>
+
+@DynamicComponent
+
+@code {
+
+    [Parameter]
+    public string EncodedAssemblyPathname { get; set; }
+
+    private RenderFragment DynamicComponent { get; set; }
+    private ComponentManager ComponentMgr = null;
+
+    protected override void OnInitialized()
+    {
+        if (ComponentMgr == null)
+            ComponentMgr = ComponentManager.GetComponent(EncodedAssemblyPathname);
+
+        DynamicComponent = ComponentMgr.Instance;
+    }
+
+    public void Dispose()
+    {
+        DynamicComponent = null;
+        if (ComponentMgr != null)
+        {
+            ComponentMgr.Dispose();
+            ComponentMgr = null;
+        }
+    }
+
+}
